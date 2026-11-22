@@ -1,0 +1,16 @@
+{
+  "name": "senior-qa-tester-assignment",
+  "version": "1.0.0",
+  "description": "SauceDemo Playwright Automation Testing",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}
+
+
+
+
+
