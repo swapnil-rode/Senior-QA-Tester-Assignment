@@ -1,53 +1,103 @@
 import { test, expect } from '@playwright/test';
 
-test('test', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="username"]').click();
+const URL = 'https://www.saucedemo.com/';
+const PASSWORD = 'secret_sauce';
+
+// TC_01: Valid Login
+test('TC_01 - Verify successful login', async ({ page }) => {
+  await page.goto(URL);
+
   await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').click();
-  await page.locator('[data-test="password"]').fill('secret_sauce');
+  await page.locator('[data-test="password"]').fill(PASSWORD);
   await page.locator('[data-test="login-button"]').click();
+
+  await expect(page).toHaveURL(/inventory.html/);
+  await expect(page.locator('.title')).toHaveText('Products');
+});
+
+// TC_02: Invalid Password
+test('TC_02 - Verify login with invalid password', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="password"]').fill('wrong_password');
+  await page.locator('[data-test="login-button"]').click();
+
+  await expect(page.locator('[data-test="error"]'))
+    .toContainText('Username and password do not match');
+});
+
+// TC_03: Empty Username
+test('TC_03 - Verify login with empty username', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="password"]').fill(PASSWORD);
+  await page.locator('[data-test="login-button"]').click();
+
+  await expect(page.locator('[data-test="error"]'))
+    .toContainText('Username is required');
+});
+
+// TC_04: Empty Password
+test('TC_04 - Verify login with empty password', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="login-button"]').click();
+
+  await expect(page.locator('[data-test="error"]'))
+    .toContainText('Password is required');
+});
+
+// TC_05: Locked Out User
+test('TC_05 - Verify locked out user login', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('locked_out_user');
+  await page.locator('[data-test="password"]').fill(PASSWORD);
+  await page.locator('[data-test="login-button"]').click();
+
+  await expect(page.locator('[data-test="error"]'))
+    .toContainText('Sorry, this user has been locked out');
+});
+
+// TC_06: Product Listing
+test('TC_06 - Verify product listing', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="password"]').fill(PASSWORD);
+  await page.locator('[data-test="login-button"]').click();
+
+  await expect(page.locator('.inventory_item')).toHaveCount(6);
+});
+
+// TC_07: Add Product to Cart
+test('TC_07 - Verify adding product to cart', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="password"]').fill(PASSWORD);
+  await page.locator('[data-test="login-button"]').click();
+
+  await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
+
+  await expect(page.locator('.shopping_cart_badge')).toHaveText('1');
+});
+
+// TC_08: Remove Product from Cart
+test('TC_08 - Verify removing product from cart', async ({ page }) => {
+  await page.goto(URL);
+
+  await page.locator('[data-test="username"]').fill('standard_user');
+  await page.locator('[data-test="password"]').fill(PASSWORD);
+  await page.locator('[data-test="login-button"]').click();
+
   await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
   await page.locator('[data-test="shopping-cart-link"]').click();
-  await page.locator('[data-test="checkout"]').click();
-  await page.locator('[data-test="firstName"]').click();
-  await page.locator('[data-test="firstName"]').fill('swapnil');
-  await page.locator('[data-test="lastName"]').click();
-  await page.locator('[data-test="lastName"]').fill('rode');
-  await page.locator('[data-test="postalCode"]').click();
-  await page.locator('[data-test="postalCode"]').fill('431515');
-  await page.locator('.error-message-container').click();
-  await page.locator('.error-message-container').click();
-  await page.locator('.error-message-container').dblclick();
-  await page.locator('.error-message-container').click();
-  await page.locator('[data-test="continue"]').click();
-  await page.locator('body').press('ControlOrMeta+-');
-  await page1.goto('https://www.google.com/search?q=chatgpt&oq=chatgpt&gs_lcrp=EgZjaHJvbWUyBggAEEUYOdIBCDMwNzNqMGo3qAIAsAIA&sourceid=chrome&source=chrome.ob&ie=UTF-8');
-  await page1.goto('https://www.google.com/sorry/index?continue=https://www.google.com/search%3Fq%3Dchatgpt%26oq%3Dchatgpt%26gs_lcrp%3DEgZjaHJvbWUyBggAEEUYOdIBCDMwNzNqMGo3qAIAsAIA%26sourceid%3Dchrome%26source%3Dchrome.ob%26ie%3DUTF-8%26sei%3DAq0Ca5-JIq6N4-EPrZbA8As&q=EhAkCUCQIJK0CvwsyO3pnfFSGILaitgGIjD7S_CwSiGgTUYK00fd-Bar5jg-HLLJEp_ARHvtNpR8vA1iCq519Dt88VNJDjxXvbEyAVJaAUNgkKqZkvSZrM4R');
-  await page.locator('[data-test="finish"]').click();
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="login-button"]').click();
-  await page.locator('#login_button_container').click();
-  await page.locator('[data-test="username"]').click();
-  await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').click();
-  await page.locator('[data-test="password"]').fill('secret_sauce');
-  await page.locator('[data-test="login-button"]').click();
-  await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-  await page.locator('[data-test="shopping-cart-link"]').click();
-  await page.locator('[data-test="checkout"]').click();
-  await page.locator('[data-test="firstName"]').click();
-  await page.locator('[data-test="firstName"]').fill('swapnil');
-  await page.locator('[data-test="lastName"]').click();
-  await page.locator('[data-test="lastName"]').fill('rode');
-  await page.locator('[data-test="postalCode"]').click();
-  await page.locator('[data-test="postalCode"]').fill('431515');
-  await page.locator('[data-test="continue"]').click();
-  await page.getByText('CancelFinish').click();
-  await page.locator('[data-test="finish"]').click();
-  await page.locator('[data-test="back-to-products"]').click();
-  await page.getByRole('button', { name: 'Open Menu' }).click();
-  await page.locator('[data-test="logout-sidebar-link"]').click();
+
+  await page.locator('[data-test="remove-sauce-labs-backpack"]').click();
+
+  await expect(page.locator('.cart_item')).toHaveCount(0);
+  await expect(page.locator('.shopping_cart_badge')).toHaveCount(0);
 });
