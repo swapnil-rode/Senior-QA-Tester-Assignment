@@ -1,4 +1,9 @@
-fullyParallel: true,
+const { defineConfig } = require('@playwright/test');
+
+module.exports = defineConfig({
+  testDir: './Automation/tests',
+
+  fullyParallel: true,
 
   reporter: 'list',
 
